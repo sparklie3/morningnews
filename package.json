@@ -1,0 +1,14 @@
+{
+  "name": "morning_news",
+  "version": "1.0.0",
+  "description": "grab news headlines",
+  "main": "index.js",
+  "scripts": {
+    "start": "index.js"
+  },
+  "author": "shaw",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
