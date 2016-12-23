@@ -16,7 +16,7 @@ function endIt(res, data){
         console.log(data);
         res.send(data);
         res.end();
-    }
+    };
 }
 
 
@@ -25,6 +25,17 @@ function endIt(res, data){
 app.post('/',function(req,res){
    res.send(req);
    res.end();
+   
+   
+   /*
+   {
+    "speech": "Barack Hussein Obama II is the 44th and current President of the United States.",
+    "displayText": "Barack Hussein Obama II is the 44th and current President of the United States, and the first African American to hold the office. Born in Honolulu, Hawaii, Obama is a graduate of Columbia University   and Harvard Law School, where ",
+    "data": {...},
+    "contextOut": [...],
+    "source": "DuckDuckGo"
+    }
+    */
 });
 
 
@@ -41,7 +52,7 @@ app.get('/', function(req,res){
                        sourceId.push(data.sources[i].id);
                     }
                      return sourceId;
-                 }
+                 };
                 var sourceId = getSourceId(data);
                 var randNumber = Math.round(Math.random()*sourceId.length);
                 //console.log(newsArticle+sourceMethod+sourceId[randNumber]);
@@ -55,12 +66,13 @@ app.get('/', function(req,res){
                         res.send(data.articles[0].description);
                         res.end();
                     }else{
+                        console.log(response);
                         console.log(error);
                         throw error;
                     }
                     
                     
-                })         
+                })   ;      
                  
                 
              }else{
