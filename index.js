@@ -77,16 +77,27 @@ app.route('/')
     
     .post(upload.array(),function(req,res){
         console.log(req.body);
-        var output =   {
-            "speech": "Barack Hussein Obama II is the 44th and current President of the United States.",
-            "displayText": "Barack Hussein Obama II is the 44th and current President of the United States, and the first African American to hold the office. Born in Honolulu, Hawaii, Obama is a graduate of Columbia University   and Harvard Law School, where ",
-            "data": {},
-            "contextOut": [],
-            "source": "DuckDuckGo"
-            }
+        var actionName = req.body.result.action;
+        var category = req.body.result.parameters.category;
+        
+        if (actionName ==="orderNews" && category !== ""){
+            console.log(category);
+            orderNews(category).then(function(data){
+                var description = data.articles[0].description;
+                console.log("data: " + description);
+                var output =   {
+                    "speech": description,
+                    "displayText": description,
+                    "source": "NewsApi.org"
+                    }
+                res.json(output);
+                res.end();
+            });
+        } else {
+            res.end();     
+        }
+        
        
-       res.json(req.body);
-       res.end();
        
        
        /*
