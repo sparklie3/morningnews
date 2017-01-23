@@ -6,6 +6,10 @@ var request = require("request");
 var bodyParser = require('body-parser');
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
+
+var mongo = require('mongodb').MongoClient;
+const mongodbUrl = process.env.MLAB || 'mongodb://localhost:27017/data'; 
+
 const newsApiKey = process.env.newsApiKey;
 const newsSource = "https://newsapi.org/v1/sources?apiKey="+newsApiKey+"&language=en&country=us&";
 const categoryMethod = "category=";
@@ -23,6 +27,8 @@ function endIt(res, data){
 }
 
 app.use(bodyParser.json()); // for parsing application/json
+app.use(express.static('public'));//setting the static director
+
 
 //example ?source=the-next-web&sortBy=latest&apiKey=507a41fc68104d1484c8eabdefffce42
 
@@ -71,7 +77,7 @@ function orderNews(categoryVal){
 
 app.route('/')
     .get(function(req,res){
-        res.send('get info');
+        res.sendFile('index.html', {root: __dirname});
         res.end();
     })
     
