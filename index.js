@@ -1,41 +1,56 @@
 //powered by NewsAPI.org
 
 var express = require("express");
-var app = express();
-var request = require("request");
-var bodyParser = require('body-parser');
+var request = require("request"); //getting stuff
+var bodyParser = require('body-parser'); //parsing stuff
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
+var getNewsModule = require("../getNews")
 
 var mongo = require('mongodb').MongoClient;
-const mongodbUrl = process.env.MLAB || 'mongodb://localhost:27017/data'; 
+const mongodbUrl = process.env.MLAB || 'mongodb://localhost:27017/data';
 
+
+var app = express();
 const newsApiKey = process.env.newsApiKey;
-const newsSource = "https://newsapi.org/v1/sources?apiKey="+newsApiKey+"&language=en&country=us&";
+const newsSource = "https://newsapi.org/v1/sources?apiKey=" + newsApiKey + "&language=en&country=us&";
 const categoryMethod = "category=";
 
-const newsArticle = "https://newsapi.org/v1/articles?apiKey="+newsApiKey+"&sortBy=top&";
+const newsArticle = "https://newsapi.org/v1/articles?apiKey=" + newsApiKey + "&sortBy=top&";
 const sourceMethod = "source=";
 
-//pointless
-function endIt(res, data){
-    return function(){
-        console.log(data);
-        res.send(data);
-        res.end();
-    };
-}
-
 app.use(bodyParser.json()); // for parsing application/json
-app.use(express.static('public'));//setting the static director
+app.use(express.static('public')); //setting the static director
 
 
+app.post('/', upload.array(), function(req, res) {
+    var intentName = req.body.result.action;
+    var entityNewsCategoryInput = req.body.result.parameters.category;
+
+    if (intentName === "getNews") {
+        var output = {};
+        output.speech = new Promise(function(resolve, reject) {
+            resolve(getNewsModule.getNews(entityNewsCategoryInput));
+        }).catch(function(err) {
+            return err;
+        });
+        res.json(output);
+        res.end();
+    }
+    else {
+        res.end();
+    }
+});
+
+
+
+
+/*
 //example ?source=the-next-web&sortBy=latest&apiKey=507a41fc68104d1484c8eabdefffce42
 
 function orderNews(categoryVal){
     return new Promise(function(resolve, reject){
-        var category = categoryVal; // this is the input from api.ai
-        request.get(newsSource+categoryMethod+category, function(error, response, data){
+        request.get(newsSource+categoryMethod+categoryVal, function(error, response, data){
             if (!error && response.statusCode == 200){
                 data = JSON.parse(data);
                 //console.log(data.sources.length);
@@ -102,11 +117,8 @@ app.route('/')
         } else {
             res.end();     
         }
-        
+
        
-       
-       
-       /*
        {
         "speech": "Barack Hussein Obama II is the 44th and current President of the United States.",
         "displayText": "Barack Hussein Obama II is the 44th and current President of the United States, and the first African American to hold the office. Born in Honolulu, Hawaii, Obama is a graduate of Columbia University   and Harvard Law School, where ",
@@ -115,10 +127,10 @@ app.route('/')
         "source": "DuckDuckGo"
         }
         */
-    });
-            
 
 
-app.listen(process.env.PORT, function(){
-    console.log("Server listening on: "+ process.env.PORT);
+
+
+app.listen(process.env.PORT, function() {
+    console.log("Server listening on: " + process.env.PORT);
 });
